@@ -1,0 +1,76 @@
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+const loginModal = $("#loginModal");
+const cartModal = $("#cartModal");
+const toast = $("#toast");
+const cartCount = $("#cartCount");
+let cart = [];
+
+function openModal(modal){ modal.classList.add("open"); modal.setAttribute("aria-hidden","false"); }
+function closeModal(modal){ modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); }
+function showToast(message){
+  toast.textContent = message;
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),2200);
+}
+
+$("#loginBtn").addEventListener("click",()=>openModal(loginModal));
+$("#cartBtn").addEventListener("click",()=>{
+  $("#cartMessage").textContent = cart.length ? `${cart.length} item${cart.length>1?"s":""} selected: ${cart.join(", ")}.` : "No items yet.";
+  openModal(cartModal);
+});
+
+$$("[data-close]").forEach(btn=>{
+  btn.addEventListener("click",()=>closeModal($("#"+btn.dataset.close)));
+});
+
+[loginModal,cartModal].forEach(modal=>{
+  modal.addEventListener("click",e=>{if(e.target===modal) closeModal(modal)});
+});
+
+$("#menuToggle").addEventListener("click",()=>$("#mainNav").classList.toggle("open"));
+$$(".nav a").forEach(a=>a.addEventListener("click",()=>$("#mainNav").classList.remove("open")));
+
+$$(".add-cart").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const item=btn.dataset.item;
+    cart.push(item);
+    cartCount.textContent=cart.length;
+    showToast(`${item} added to your inquiry cart.`);
+  });
+});
+
+$("#loginForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const email=$("#loginEmail").value.trim();
+  if(!email) return;
+  closeModal(loginModal);
+  showToast("Demo login successful.");
+});
+
+$("#contactBtn").addEventListener("click",()=>{
+  document.querySelector("#contact").scrollIntoView({behavior:"smooth"});
+  showToast("Contact section ready.");
+});
+
+$("#newsletter").addEventListener("submit",e=>{
+  e.preventDefault();
+  showToast("Thanks â you're subscribed.");
+  e.target.reset();
+});
+
+$("#searchBtn").addEventListener("click",()=>{
+  const term=prompt("What are you looking for?");
+  if(term) showToast(`Searching TeslaStaink for "${term}"â¦`);
+});
+
+$("#forgot").addEventListener("click",e=>{
+  e.preventDefault();
+  showToast("Password reset would be sent here.");
+});
+
+$("#signupLink").addEventListener("click",e=>{
+  e.preventDefault();
+  showToast("Account registration can be connected next.");
+});
